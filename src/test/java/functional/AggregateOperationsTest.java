@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,12 @@ public class AggregateOperationsTest {
                                                         .collect(Collectors.groupingBy(Person::getGender, Collectors.averagingInt(Person::getAge)));
         System.out.println("Average age by gender = ");
         averageAgeByGender.forEach((gender, averageAge) -> System.out.println(gender + ": " + averageAge));
+
+        List<String> allNamesUpper = allPersons
+                .parallelStream()
+                .map(p -> p.getName().toUpperCase())
+                .collect(Collectors.toList());
+        System.out.println(allNamesUpper);
     }
 }
 
