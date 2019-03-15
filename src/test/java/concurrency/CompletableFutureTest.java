@@ -3,6 +3,7 @@ package concurrency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,4 +93,38 @@ public class CompletableFutureTest {
         assertEquals("this is the whole thing", wholeTask.get());
     }
 
+    @Test
+    @DisplayName("Run Async Task (2)")
+    public void testRunAsyncTask() throws Exception {
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+           System.out.println(Thread.currentThread().getName() + ": Sleeping for 2s ...");
+           try {
+               Thread.sleep(2000);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+            System.out.println(Thread.currentThread().getName() + ": Done sleeping for 2s ...");
+        }, service);
+
+        System.out.println("Test case start");
+        future.get();
+        System.out.println("Test case done");
+    }
+
+    @Test
+    @DisplayName("Check limited size of common fork-join pool")
+    public void testForkJoinSize() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            CompletableFuture.runAsync(() -> {
+                System.out.println(LocalDateTime.now() + ": " + Thread.currentThread().getName() + ": Sleeping for 5s ...");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(LocalDateTime.now() + ": " + Thread.currentThread().getName() + ": Done sleeping for 5s ...");
+            });
+        }
+        Thread.sleep(500000);
+    }
 }
